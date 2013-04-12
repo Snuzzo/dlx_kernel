@@ -120,7 +120,15 @@ config CPU_FREQ_DEFAULT_GOV_HYPER
         help
           Use the CPUFreq governor 'hyper' as default.
 
+config CPU_FREQ_DEFAULT_GOV_WHEATLEY
+	bool "wheatley"
+	select CPU_FREQ_GOV_WHEATLEY
+
 endchoice
+
+config CPU_FREQ_GOV_WHEATLEY
+	tristate "'wheatley' cpufreq governor"
+	depends on CPU_FREQ
 
 config CPU_FREQ_GOV_HYPER
         tristate "'hyper' cpufreq governor"
