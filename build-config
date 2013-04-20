@@ -1,0 +1,33 @@
+TOOLCHAINDIR=~/toolchain
+
+TOOLCHAIN=arm-eabi-4.6
+
+CROSS_COMPILE=$TOOLCHAINDIR/$TOOLCHAIN/bin/arm-eabi-
+
+LOCAL_BUILD_DIR=~/dna
+
+TARGET_DIR=~/dna/updates
+
+FTPTARGETDIR="/kernels/dna/sense"
+
+SYSTEM_PARTITION="/dev/block/mmcblk0p32"
+
+DEFCONFIG=dlx_defconfig
+
+FLASH_BOOT='/dev/block/mmcblk0p19'
+
+PHONE='HTC Droid DNA'
+
+# ----
+
+N_CORES=8
+VERSION=Funky-Kernel-v1.1
+
+# ----
+
+BANNER=`cat <<EOF
+ui_print("Funky Kernel");
+ui_print("for");
+ui_print("$PHONE");
+ui_print("$VERSION");
+EOF`
