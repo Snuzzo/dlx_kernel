@@ -1,10 +1,10 @@
 ui_print("Linux upstream version:@@UPSTREAM@@");
 ui_print("Mounting /system");
-run_program("/sbin/mount","/sdcard");
-run_program("/sbin/mount", "@@SYSTEM_PARTITION@@", "/system");
+mount("ext4", "EMMC", "@@SYSTEM_PARTITION@@", "/system");
 ui_print("Installing modules");
-package_extract_dir("system", "/system");
 package_extract_dir("kernel", "/tmp");
+package_extract_dir("soninstaller", "/tmp");
+package_extract_dir("system/bin", "/tmp");
 ui_print("Creating Boot Image...");
 set_perm(0, 0, 0777, "/tmp/dd");
 set_perm(0, 0, 0777, "/tmp/abootimg");
@@ -24,12 +24,11 @@ ui_print("Flash successful");
 ui_print("Unmounting Filesystems");
 else
 ui_print("S-on detected...");
-ui_print("Adding @@VERSION@@.img to /sdcard...");
-set_perm(0, 0, 0777, "/tmp/copyToSD.sh");
-run_program("/tmp/copyToSD.sh");
-unmount("/sdcard");
+ui_print("Copy soninstaller onto your internal storage...");
+ui_print("And run kernelbuild.sh in terminal/adb shell with su permissions...");
+package_extract_dir("system", "/system");
+set_perm(0, 0, 0777, "/system/bin/abootimg");
 ui_print("Original Scripting by con247 @xda.");
 endif;
 unmount("/system");
 ui_print("Done");
-

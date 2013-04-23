@@ -5,9 +5,9 @@ msg() {
     echo ==== $* ====
     echo
 }
-grep 'VERSION = ' "$TOOLS_DIR/Makefile" >>build-config
-grep 'PATCHLEVEL = ' "$TOOLS_DIR/Makefile" >>build-config
-grep 'SUBLEVEL = ' "$TOOLS_DIR/Makefile" >>build-config
+grep 'VERSION = ' "Makefile" >>build-config
+grep 'PATCHLEVEL = ' "Makefile" >>build-config
+grep 'SUBLEVEL = ' "Makefile" >>build-config
 sed -i 's/VERSION = /MAIN=/g' build-config >> build-config
 sed -i 's/PATCHLEVEL = /PATCHLEVEL=/g' build-config >> build-config
 sed -i 's/SUBLEVEL = /SUBLEVEL=/g' build-config >> build-config
@@ -77,7 +77,9 @@ $MAKE -j$N_CORES
 msg Kernel built successfully, building $ZIP
 
 mkdir -p $UPDATE_ROOT/system/lib/modules
+mkdir -p $UPDATE_ROOT/system/bin
 find . -name '*.ko' -exec cp {} $UPDATE_ROOT/system/lib/modules/ \;
+cp abootimg $UPDATE_ROOT/system/bin
 
 mkdir -p $UPDATE_ROOT/META-INF/com/google/android
 cp $TOOLS_DIR/update-binary $UPDATE_ROOT/META-INF/com/google/android
@@ -85,7 +87,12 @@ cp $TOOLS_DIR/update-binary $UPDATE_ROOT/META-INF/com/google/android
 $SHA1
 
 SUM=`sha1sum $ZIMAGE | cut --delimiter=' ' -f 1`
- 
+
+mkdir -p $UPDATE_ROOT/soninstaller
+mkdir -p $UPDATE_ROOT/kernel
+cp $ZIMAGE $UPDATE_ROOT/soninstaller/zImage
+cp $ANYKERNEL/* $UPDATE_ROOT/kernel
+
 (
     cat <<EOF
 $BANNER
@@ -97,11 +104,10 @@ EOF
       -e "s|@@VERSION@@|$VERSION|" \
       < $TOOLS_DIR/updater-script
 ) > $UPDATE_ROOT/META-INF/com/google/android/updater-script
-
-mkdir -p $UPDATE_ROOT/kernel
-cp $ZIMAGE $ANYKERNEL
-sed -e "s|@@VERSION@@|$VERSION|" < copyToSD.sh > $ANYKERNEL/copyToSD.sh
-cp $ANYKERNEL/* $UPDATE_ROOT/kernel
+(sed -e "s|@@FLASH_BOOT@@|$FLASH_BOOT|" \
+      -e "s|@@VERSION@@|$VERSION|" \
+      < kernelbuild.sh
+) > $UPDATE_ROOT/soninstaller/kernelbuild.sh
 
 (
     cd $UPDATE_ROOT
@@ -126,6 +132,5 @@ perl -ne 'chomp; printf "%s</p></font>\n", $_' < temp >> $TARGET_DIR/ChangeLog.h
 echo "</div></body></html>" >> $TARGET_DIR/ChangeLog.html
 rm temp2
 rm temp
-cp ChangeLog.html $TARGET_DIR/ChangeLog.html
 $FTP
 msg COMPLETE
