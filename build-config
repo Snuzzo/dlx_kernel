@@ -18,6 +18,7 @@ FLASH_BOOT='/dev/block/mmcblk0p19'
 
 PHONE='HTC Droid DNA'
 
+DATE=$(date +".%m%d%y")
 # ----
 
 N_CORES=8

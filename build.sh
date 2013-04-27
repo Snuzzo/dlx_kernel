@@ -77,9 +77,7 @@ $MAKE -j$N_CORES
 msg Kernel built successfully, building $ZIP
 
 mkdir -p $UPDATE_ROOT/system/lib/modules
-mkdir -p $UPDATE_ROOT/system/bin
 find . -name '*.ko' -exec cp {} $UPDATE_ROOT/system/lib/modules/ \;
-cp abootimg $UPDATE_ROOT/system/bin
 
 mkdir -p $UPDATE_ROOT/META-INF/com/google/android
 cp $TOOLS_DIR/update-binary $UPDATE_ROOT/META-INF/com/google/android
@@ -88,9 +86,8 @@ $SHA1
 
 SUM=`sha1sum $ZIMAGE | cut --delimiter=' ' -f 1`
 
-mkdir -p $UPDATE_ROOT/soninstaller
 mkdir -p $UPDATE_ROOT/kernel
-cp $ZIMAGE $UPDATE_ROOT/soninstaller/zImage
+cp $ZIMAGE $ANYKERNEL
 cp $ANYKERNEL/* $UPDATE_ROOT/kernel
 
 (
@@ -102,12 +99,9 @@ EOF
       -e "s|@@SUM@@|$SUM|" \
       -e "s|@@UPSTREAM@@|$UPSTREAM|" \
       -e "s|@@VERSION@@|$VERSION|" \
+      -e "s|@@DATE@@|$DATE|" \
       < $TOOLS_DIR/updater-script
 ) > $UPDATE_ROOT/META-INF/com/google/android/updater-script
-(sed -e "s|@@FLASH_BOOT@@|$FLASH_BOOT|" \
-      -e "s|@@VERSION@@|$VERSION|" \
-      < kernelbuild.sh
-) > $UPDATE_ROOT/soninstaller/kernelbuild.sh
 
 (
     cd $UPDATE_ROOT
