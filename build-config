@@ -22,7 +22,7 @@ DATE=$(date +".%m%d%y")
 # ----
 
 N_CORES=8
-VERSION=Funky-Kernel-v1.2
+VERSION=Funky-Kernel-v1.3
 
 # ----
 
